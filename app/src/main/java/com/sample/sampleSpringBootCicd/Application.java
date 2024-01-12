@@ -15,7 +15,7 @@ public class Application {
 
   @GetMapping("")
   public Config index() {
-    return new Config(1, "Hello, Sample Spring Boot CI/CD!");
+    return new Config(2, "Hello, Sample Spring Boot CI/CD!");
   }
 
   static class Config {
