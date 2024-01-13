@@ -8,9 +8,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @SpringBootApplication
 @RestController
 public class Application {
+
+  // application.propertiesの値を取得
+  @Value("${application.name}")
+  private String name;
+
+  // application.propertiesの値を取得
+  @Value("${application.version}")
+  private String version;
 
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
@@ -26,26 +36,26 @@ public class Application {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     String formattedDateTime = now.format(formatter);
 
-    return new Config(4, "Hello, Sample Spring Boot!", formattedDateTime);
+    return new Config(name, version, formattedDateTime);
   }
 
   static class Config {
-    private int version;
-    private String message;
+    private String name;
+    private String version;
     private String timestamp;
 
-    public Config(int version, String message, String timestamp) {
+    public Config(String name, String version, String timestamp) {
+      this.name = name;
       this.version = version;
-      this.message = message;
       this.timestamp = timestamp;
     }
 
-    public int getVersion() {
-      return version;
+    public String getName() {
+      return name;
     }
 
-    public String getMessage() {
-      return message;
+    public String getVersion() {
+      return version;
     }
 
     public String getTimestamp() {
