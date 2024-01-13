@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# . (プロジェクトルート)
+# ├── app (アプリケーションリソース)
+# │   ├── lib (共通ライブラリ)
+# │   │   ├── pom.xml
+# │   │   └── src
+# │   │       └── ...
+# │   ├── web1 (Module: Webアプリケーション1)
+# │   │   ├── Dockerfile
+# │   │   ├── pom.xml
+# │   │   └── src
+# │   │       └── ...
+# │   ├── web2 (Module: Webアプリケーション2)
+# │   │   ├── Dockerfile
+# │   │   ├── pom.xml
+# │   │   └── src
+# │   │       └── ...
+# │   └── pom.xml
+# └── bootstrap
+
+module_name=$1
+
+# cdk の影響で、docker のビルドコンテキストはモジュールルートにする必要があるので、
+# それに合わせて、ローカルのツールでも、モジュールルートに移動してから実行する
+cd app/${module_name}
+
+mvn clean package
+
+docker build -t sample-spring-boot-cicd-${module_name} .
+docker run --rm -it -p 8080:8080 sample-spring-boot-cicd-${module_name}

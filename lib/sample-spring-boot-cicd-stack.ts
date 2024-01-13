@@ -81,7 +81,7 @@ export class SampleSpringBootCicdStack extends cdk.Stack {
     const container = fargateTaskDefinition.addContainer(
       "SampleSpringBootContainer",
       {
-        image: ecs.ContainerImage.fromAsset("./app/"),
+        image: ecs.ContainerImage.fromAsset("./app/web1/"),
         logging: ecs.LogDrivers.awsLogs({
           streamPrefix: "sample-spring-boot-cicd",
           logRetention: log.RetentionDays.ONE_MONTH,

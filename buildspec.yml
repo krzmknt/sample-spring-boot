@@ -1,0 +1,45 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  install:
+    on-failure: ABORT
+    commands:
+      - ls -ahl
+      - ls / -ahl
+      - ls ~ -ahl
+      - printenv
+
+  pre_build:
+    on-failure: ABORT
+    commands:
+      # git diff があるかどうかをモジュール毎に判定
+      - echo "pre_build"
+
+  build:
+    on-failure: ABORT
+    commands:
+      # git diff がある場合にのみ、モジュールをビルド&デプロイする
+      # モジュールが増える場合は、ここに追記する
+      - |
+        if [ $libIsChanged ]; then
+          mvn -f app/lib/pom.xml clean package
+        fi
+      - |
+        if [ $web1IsChanged ]; then
+          mvn -f app/web1/pom.xml clean package
+        fi
+      - |
+        if [ $web2IsChanged ]; then
+          mvn -f app/web2/pom.xml clean package
+        fi
+
+      # docker build は cdk deploy によって行われるので不要
+
+  post_build:
+    on-failure: ABORT
+    commands:
+      # codebiuld のロールを使用するので profile の指定は不要
+      - npx cdk deploy

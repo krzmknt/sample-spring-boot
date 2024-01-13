@@ -1,4 +1,0 @@
-#!/bin/bash
-
-docker build -t sample-spring-boot-cicd .
-docker run --rm -it -p 8080:8080 sample-spring-boot-cicd
