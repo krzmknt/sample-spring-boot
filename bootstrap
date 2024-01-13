@@ -25,9 +25,14 @@ module_name=$1
 
 # cdk の影響で、docker のビルドコンテキストはモジュールルートにする必要があるので、
 # それに合わせて、ローカルのツールでも、モジュールルートに移動してから実行する
-cd app/${module_name}
+cd app
 
-mvn clean package
+mvn clean package -f ${module_name}/pom.xml
 
-docker build -t sample-spring-boot-cicd-${module_name} .
+VERSION="0.2"
+docker build -t sample-spring-boot-cicd-${module_name} . \
+  --build-arg MODULE_NAME=${module_name} \
+  --build-arg VERSION=${VERSION} \
+  --build-arg COMMIT_ID=${COMMIT_ID}
+
 docker run --rm -it -p 8080:8080 sample-spring-boot-cicd-${module_name}

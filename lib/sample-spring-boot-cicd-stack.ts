@@ -78,10 +78,20 @@ export class SampleSpringBootCicdStack extends cdk.Stack {
       }
     );
 
+    console.log("process.env.VERSION", process.env.VERSION);
     const container = fargateTaskDefinition.addContainer(
       "SampleSpringBootContainer",
       {
-        image: ecs.ContainerImage.fromAsset("./app/web1/"),
+        image: ecs.ContainerImage.fromAsset("./app/", {
+          buildArgs: {
+            MODULE_NAME: "web1",
+          },
+        }),
+        dockerLabels: {
+          version: process.env.VERSION || "Not specified",
+          commit_id:
+            process.env.CODEBUILD_RESOLVED_SOURCE_VERSION || "Not specified",
+        },
         logging: ecs.LogDrivers.awsLogs({
           streamPrefix: "sample-spring-boot-cicd",
           logRetention: log.RetentionDays.ONE_MONTH,
@@ -100,6 +110,7 @@ export class SampleSpringBootCicdStack extends cdk.Stack {
       desiredCount: 1,
       assignPublicIp: true,
       securityGroups: [securityGroupAPP],
+      healthCheckGracePeriod: cdk.Duration.seconds(300),
     });
     service.attachToApplicationTargetGroup(targetGroup);
   }
